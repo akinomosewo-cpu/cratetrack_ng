@@ -4,11 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/auth/auth_repository.dart';
 import '../../core/models/crate.dart';
+import '../../core/routing/app_transitions.dart';
 import '../../core/services/ledger_calculator.dart';
 import '../../core/theme/app_theme.dart';
 import '../blocs/crate_bloc.dart';
+import '../widgets/animated_counter.dart';
 import '../widgets/status_chip.dart';
+import 'auth/login_page.dart';
 import 'crate_detail_page.dart';
 import 'register_crate_sheet.dart';
 import 'scan_page.dart';
@@ -16,7 +20,8 @@ import 'scan_page.dart';
 final _currency = NumberFormat.currency(locale: 'en_NG', symbol: '₦', decimalDigits: 0);
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final AuthRepository? authRepository;
+  const DashboardPage({super.key, this.authRepository});
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +66,12 @@ class DashboardPage extends StatelessWidget {
                       tooltip: 'Register crate',
                       onPressed: () => _showRegisterSheet(context),
                     ),
+                    if (authRepository != null)
+                      IconButton(
+                        icon: const Icon(Icons.logout_rounded, color: AppColors.textSecondary),
+                        tooltip: 'Log out',
+                        onPressed: () => _logOut(context),
+                      ),
                     const Gap(4),
                   ],
                 ),
@@ -105,8 +116,11 @@ class DashboardPage extends StatelessWidget {
                               Text('TOTAL RENTAL REVENUE',
                                   style: AppTextStyles.labelMedium.copyWith(color: Colors.white70, letterSpacing: 0.8)),
                               const Gap(6),
-                              Text(_currency.format(revenue),
-                                  style: AppTextStyles.displayLarge.copyWith(color: Colors.white)),
+                              AnimatedCounter(
+                                value: revenue,
+                                formatter: (v) => _currency.format(v),
+                                style: AppTextStyles.displayLarge.copyWith(color: Colors.white),
+                              ),
                             ],
                           ),
                         ).animate(delay: 180.ms).fadeIn().slideY(begin: 0.1),
@@ -172,7 +186,7 @@ class DashboardPage extends StatelessWidget {
   void _openScanner(BuildContext context) async {
     final bloc = context.read<CrateBloc>();
     final crateId = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => const ScanPage()),
+      AppPageRoute(builder: (_) => const ScanPage()),
     );
     if (crateId == null) return;
     final crate = bloc.repository.getCrate(crateId);
@@ -185,9 +199,21 @@ class DashboardPage extends StatelessWidget {
       return;
     }
     if (context.mounted) {
-      Navigator.of(context).push(MaterialPageRoute(
+      Navigator.of(context).push(AppPageRoute(
         builder: (_) => BlocProvider.value(value: bloc, child: CrateDetailPage(crateId: crateId)),
       ));
+    }
+  }
+
+  Future<void> _logOut(BuildContext context) async {
+    final repo = authRepository;
+    if (repo == null) return;
+    await repo.logOut();
+    if (context.mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        AppPageRoute<void>(builder: (_) => LoginPage(authRepository: repo, crateRepository: context.read<CrateBloc>().repository)),
+        (route) => false,
+      );
     }
   }
 }
@@ -206,7 +232,11 @@ class _StatCard extends StatelessWidget {
             boxShadow: AppShadows.soft,
           ),
           child: Column(children: [
-            Text(value, style: AppTextStyles.displaySmall.copyWith(color: color, fontWeight: FontWeight.w800)),
+            AnimatedCounter(
+              value: int.tryParse(value) ?? 0,
+              formatter: (v) => v.toStringAsFixed(0),
+              style: AppTextStyles.displaySmall.copyWith(color: color, fontWeight: FontWeight.w800),
+            ),
             const Gap(4),
             Text(label, style: AppTextStyles.labelSmall.copyWith(color: AppColors.textSecondary), textAlign: TextAlign.center),
           ]),
@@ -222,7 +252,7 @@ class _CrateTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(AppRadii.card),
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+      onTap: () => Navigator.of(context).push(AppPageRoute(
         builder: (_) => BlocProvider.value(value: context.read<CrateBloc>(), child: CrateDetailPage(crateId: crate.id)),
       )),
       child: Container(

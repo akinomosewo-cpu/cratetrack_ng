@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/auth/auth_repository.dart';
 import 'core/theme/app_theme.dart';
 import 'data/crate_repository.dart';
-import 'presentation/blocs/crate_bloc.dart';
-import 'presentation/pages/dashboard_page.dart';
+import 'presentation/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final repository = CrateRepository();
   await repository.init();
+  final authRepository = AuthRepository();
+  await authRepository.init();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
@@ -17,25 +18,23 @@ void main() async {
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(CrateTrackApp(repository: repository));
+  runApp(CrateTrackApp(repository: repository, authRepository: authRepository));
 }
 
 class CrateTrackApp extends StatelessWidget {
   final CrateRepository repository;
-  const CrateTrackApp({super.key, required this.repository});
+  final AuthRepository authRepository;
+  const CrateTrackApp({super.key, required this.repository, required this.authRepository});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => CrateBloc(repository)..add(const CratesLoaded()),
-      child: MaterialApp(
-        title: 'CrateTrack NG',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.dark,
-        darkTheme: AppTheme.dark,
-        themeMode: ThemeMode.light,
-        home: const DashboardPage(),
-      ),
+    return MaterialApp(
+      title: 'CrateTrack NG',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.dark,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.light,
+      home: SplashPage(authRepository: authRepository, crateRepository: repository),
     );
   }
 }

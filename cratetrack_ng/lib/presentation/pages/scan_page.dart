@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../core/theme/app_theme.dart';
@@ -13,6 +14,7 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   final MobileScannerController _controller = MobileScannerController();
   bool _handled = false;
+  String? _scannedValue;
 
   @override
   void dispose() {
@@ -27,7 +29,12 @@ class _ScanPageState extends State<ScanPage> {
     final value = barcodes.first.rawValue;
     if (value == null || value.isEmpty) return;
     _handled = true;
-    Navigator.of(context).pop(value);
+    setState(() => _scannedValue = value);
+    // Briefly show the success checkmark before handing the result back so
+    // the scan feels confirmed rather than instant/jarring.
+    Future.delayed(const Duration(milliseconds: 650), () {
+      if (mounted) Navigator.of(context).pop(value);
+    });
   }
 
   @override
@@ -69,6 +76,21 @@ class _ScanPageState extends State<ScanPage> {
               style: AppTextStyles.bodyMedium.copyWith(color: Colors.white70),
             ),
           ),
+          if (_scannedValue != null)
+            Container(
+              color: Colors.black54,
+              child: Center(
+                child: Container(
+                  width: 96,
+                  height: 96,
+                  decoration: const BoxDecoration(color: AppColors.success, shape: BoxShape.circle),
+                  child: const Icon(Icons.check_rounded, color: Colors.white, size: 52),
+                )
+                    .animate()
+                    .scale(begin: const Offset(0.3, 0.3), duration: 300.ms, curve: Curves.elasticOut)
+                    .fadeIn(duration: 150.ms),
+              ),
+            ),
         ],
       ),
     );
