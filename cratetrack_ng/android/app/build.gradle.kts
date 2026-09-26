@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "ng.cratetrack.cratetrack_ng"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
