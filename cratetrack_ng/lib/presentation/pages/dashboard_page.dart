@@ -48,7 +48,7 @@ class DashboardPage extends StatelessWidget {
                     ),
                     const Gap(10),
                     Text('CrateTrack NG',
-                        style: AppTextStyles.headlineMedium.copyWith(color: AppColors.textPrimary)),
+                        style: AppTextStyles.headlineMedium.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w800)),
                   ]),
                   actions: [
                     IconButton(
@@ -93,40 +93,51 @@ class DashboardPage extends StatelessWidget {
                         const Gap(12),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             gradient: AppColors.primaryGradient,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(AppRadii.cardLarge),
+                            boxShadow: AppShadows.colored(AppColors.primary),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Total rental revenue',
-                                  style: AppTextStyles.labelMedium.copyWith(color: Colors.white70)),
-                              const Gap(4),
+                              Text('TOTAL RENTAL REVENUE',
+                                  style: AppTextStyles.labelMedium.copyWith(color: Colors.white70, letterSpacing: 0.8)),
+                              const Gap(6),
                               Text(_currency.format(revenue),
-                                  style: AppTextStyles.displayMedium.copyWith(color: Colors.white)),
+                                  style: AppTextStyles.displayLarge.copyWith(color: Colors.white)),
                             ],
                           ),
                         ).animate(delay: 180.ms).fadeIn().slideY(begin: 0.1),
-                        const Gap(24),
-                        Text('Crate Inventory', style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
-                        const Gap(12),
+                        const Gap(28),
+                        Text('Crate Inventory', style: AppTextStyles.headlineMedium.copyWith(color: AppColors.textPrimary)),
+                        const Gap(14),
                         if (crates.isEmpty)
                           Container(
-                            padding: const EdgeInsets.all(32),
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
                             decoration: BoxDecoration(
-                                color: AppColors.surface,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: AppColors.border)),
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(AppRadii.cardLarge),
+                              boxShadow: AppShadows.card,
+                            ),
                             child: Column(children: [
-                              const Icon(Icons.inventory_2_rounded, color: AppColors.textTertiary, size: 40),
-                              const Gap(12),
+                              Container(
+                                width: 88,
+                                height: 88,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.12),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.inventory_2_rounded, color: AppColors.primary, size: 40),
+                              ),
+                              const Gap(18),
                               Text('No crates registered yet',
-                                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary)),
-                              const Gap(4),
+                                  style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
+                              const Gap(6),
                               Text('Tap + to register your first crate',
-                                  style: AppTextStyles.labelMedium.copyWith(color: AppColors.textTertiary)),
+                                  style: AppTextStyles.labelMedium.copyWith(color: AppColors.textSecondary)),
                             ]),
                           ).animate().fadeIn(delay: 250.ms)
                         else
@@ -153,7 +164,7 @@ class DashboardPage extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.sheet))),
       builder: (_) => BlocProvider.value(value: context.read<CrateBloc>(), child: const RegisterCrateSheet()),
     );
   }
@@ -188,12 +199,15 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Expanded(
         child: Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
           decoration: BoxDecoration(
-              color: AppColors.surface, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppRadii.card),
+            boxShadow: AppShadows.soft,
+          ),
           child: Column(children: [
             Text(value, style: AppTextStyles.displaySmall.copyWith(color: color, fontWeight: FontWeight.w800)),
-            const Gap(2),
+            const Gap(4),
             Text(label, style: AppTextStyles.labelSmall.copyWith(color: AppColors.textSecondary), textAlign: TextAlign.center),
           ]),
         ),
@@ -207,19 +221,22 @@ class _CrateTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadii.card),
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => BlocProvider.value(value: context.read<CrateBloc>(), child: CrateDetailPage(crateId: crate.id)),
       )),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-            color: AppColors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadii.card),
+          boxShadow: AppShadows.soft,
+        ),
         child: Row(children: [
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(crate.label, style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
-              const Gap(2),
+              const Gap(4),
               Text('Held by ${crate.currentHolder ?? 'Unassigned'}',
                   style: AppTextStyles.labelMedium.copyWith(color: AppColors.textSecondary)),
             ]),

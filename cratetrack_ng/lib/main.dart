@@ -12,8 +12,9 @@ void main() async {
   await repository.init();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: AppColors.background,
+    systemNavigationBarIconBrightness: Brightness.dark,
   ));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(CrateTrackApp(repository: repository));
@@ -32,7 +33,7 @@ class CrateTrackApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.dark,
         darkTheme: AppTheme.dark,
-        themeMode: ThemeMode.dark,
+        themeMode: ThemeMode.light,
         home: const DashboardPage(),
       ),
     );

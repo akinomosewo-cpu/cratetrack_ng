@@ -63,7 +63,7 @@ class _CrateDetailPageState extends State<CrateDetailPage> with SingleTickerProv
           backgroundColor: AppColors.background,
           appBar: AppBar(
             backgroundColor: AppColors.background,
-            title: Text(crate.label, style: AppTextStyles.headlineMedium.copyWith(color: AppColors.textPrimary)),
+            title: Text(crate.label, style: AppTextStyles.headlineMedium.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w800)),
             actions: [
               IconButton(
                 icon: const Icon(Icons.delete_outline_rounded, color: AppColors.danger),
@@ -76,8 +76,12 @@ class _CrateDetailPageState extends State<CrateDetailPage> with SingleTickerProv
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
               child: Row(children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(AppRadii.card),
+                    boxShadow: AppShadows.soft,
+                  ),
                   child: QrImageView(data: crate.id, size: 72, backgroundColor: Colors.white),
                 ),
                 const Gap(16),
@@ -135,6 +139,7 @@ class _CrateDetailPageState extends State<CrateDetailPage> with SingleTickerProv
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.card)),
         title: Text('Delete crate?', style: AppTextStyles.headlineSmall.copyWith(color: AppColors.textPrimary)),
         content: Text('This removes the crate record. History stays for auditing.',
             style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
@@ -172,7 +177,7 @@ class _CustodyTab extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                  color: AppColors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
+                  color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadii.card), boxShadow: AppShadows.soft),
               child: Row(children: [
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -207,7 +212,7 @@ class _CustodyTab extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.sheet))),
       builder: (_) => BlocProvider.value(
         value: context.read<CrateBloc>(),
         child: _TransferSheet(crate: crate),
@@ -310,7 +315,7 @@ class _LedgerTab extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                  color: AppColors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
+                  color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadii.card), boxShadow: AppShadows.soft),
               child: Row(children: [
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -348,7 +353,7 @@ class _LedgerTab extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.sheet))),
       builder: (_) => BlocProvider.value(value: context.read<CrateBloc>(), child: _LedgerSheet(crate: crate)),
     );
   }
@@ -445,7 +450,7 @@ class _DamageTab extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                  color: AppColors.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
+                  color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadii.card), boxShadow: AppShadows.soft),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
                   Expanded(child: Text(claim.description, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary))),
@@ -508,7 +513,7 @@ class _DamageTab extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.sheet))),
       builder: (_) => BlocProvider.value(value: context.read<CrateBloc>(), child: _ClaimSheet(crate: crate)),
     );
   }
@@ -525,8 +530,8 @@ class _ClaimStatusChip extends StatelessWidget {
       ClaimStatus.rejected => AppColors.danger,
     };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(AppRadii.chip)),
       child: Text(status.label, style: AppTextStyles.labelSmall.copyWith(color: color, fontWeight: FontWeight.w700)),
     );
   }
